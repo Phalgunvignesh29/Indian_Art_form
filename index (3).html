@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Folios of Form — A Manuscript of Indian Art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Karla:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#f1e6c9;
+    --parchment-deep:#e8d9ab;
+    --ink:#2b2118;
+    --ink-soft:#5d4f3c;
+    --ink-faint:#8a7a5f;
+    --indigo:#233b57;
+    --indigo-soft:#3d5772;
+    --vermilion:#a63a2e;
+    --vermilion-soft:#c15042;
+    --gold:#a97c1f;
+    --gold-soft:#c99a3a;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--parchment);
+    background-image:
+      radial-gradient(ellipse at 15% 8%, rgba(169,124,31,0.08), transparent 40%),
+      radial-gradient(ellipse at 85% 92%, rgba(166,58,46,0.06), transparent 45%);
+    color:var(--ink);
+    font-family:'Karla', sans-serif;
+    font-weight:400;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Cormorant Garamond', serif; font-weight:600;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  ::selection{background:var(--ink); color:var(--parchment);}
+  img{filter:sepia(18%) saturate(85%) contrast(1.02);}
+  a{color:var(--ink);}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:8vh 6vw;
+    position:relative;
+    background:var(--indigo);
+    color:var(--parchment);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:18px;
+    border:1.5px solid rgba(199,158,58,0.55);
+    pointer-events:none;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:26px;
+    border:0.75px solid rgba(199,158,58,0.3);
+    pointer-events:none;
+  }
+  .corner{
+    position:absolute;
+    width:64px; height:64px;
+    opacity:0.85;
+  }
+  .corner.tl{top:26px; left:26px;}
+  .corner.tr{top:26px; right:26px; transform:scaleX(-1);}
+  .corner.bl{bottom:26px; left:26px; transform:scaleY(-1);}
+  .corner.br{bottom:26px; right:26px; transform:scale(-1,-1);}
+
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+    font-size:0.7rem;
+    color:var(--gold-soft);
+    margin-bottom:1.8rem;
+  }
+  .hero h1{
+    font-size:clamp(2.8rem, 7.5vw, 5.8rem);
+    line-height:1.02;
+    margin:0 0 1.5rem;
+    color:var(--parchment);
+    max-width:18ch;
+    font-style:italic;
+    font-weight:600;
+  }
+  .hero h1 .not-italic{
+    font-style:normal;
+    color:var(--gold-soft);
+  }
+  .hero p{
+    max-width:54ch;
+    color:#d8cca3;
+    font-size:1.05rem;
+    line-height:1.75;
+    margin:0 0 2.6rem;
+  }
+  .hero .scroll-cue{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:0.7rem;
+  }
+  .scroll-cue .glyph{
+    font-size:1.3rem;
+    animation:glyph-drift 2.4s ease-in-out infinite;
+  }
+  @keyframes glyph-drift{
+    0%,100%{transform:translateY(0); opacity:0.5;}
+    50%{transform:translateY(8px); opacity:1;}
+  }
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{
+    max-width:1160px;
+    margin:0 auto;
+    padding:9vh 5vw 4vh;
+  }
+
+  .binding{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem;
+    margin:0 0 6vh;
+    color:var(--ink-faint);
+  }
+  .binding span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.62rem;
+    letter-spacing:0.3em;
+    text-transform:uppercase;
+  }
+  .binding .dots{
+    flex:1;
+    max-width:220px;
+    height:1px;
+    background-image:radial-gradient(circle, var(--ink-faint) 1px, transparent 1.4px);
+    background-size:8px 1px;
+    background-repeat:repeat-x;
+  }
+
+  .era{
+    position:relative;
+    margin-bottom:11vh;
+    opacity:0;
+    transform:translateY(28px) rotateX(2deg);
+    transition:opacity 1s ease, transform 1s ease;
+  }
+  .era.in-view{opacity:1; transform:translateY(0) rotateX(0);}
+  .era:last-child{margin-bottom:5vh;}
+
+  .folio{
+    position:relative;
+    border:1.5px solid var(--accent, var(--indigo));
+    padding:3.4rem 3vw 3rem;
+  }
+  .folio::before{
+    content:"";
+    position:absolute; inset:8px;
+    border:0.75px solid var(--accent-soft, var(--indigo-soft));
+    pointer-events:none;
+  }
+  .folio-corner{
+    position:absolute;
+    width:34px; height:34px;
+    color:var(--accent, var(--indigo));
+  }
+  .folio-corner.tl{top:-1.5px; left:-1.5px;}
+  .folio-corner.tr{top:-1.5px; right:-1.5px; transform:scaleX(-1);}
+  .folio-corner.bl{bottom:-1.5px; left:-1.5px; transform:scaleY(-1);}
+  .folio-corner.br{bottom:-1.5px; right:-1.5px; transform:scale(-1,-1);}
+
+  .era-head{
+    text-align:center;
+    margin-bottom:2.2rem;
+  }
+  .era-head .era-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.66rem;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--accent, var(--indigo));
+    margin-bottom:0.9rem;
+  }
+  .era-titles h2{
+    font-size:clamp(1.7rem, 3.6vw, 2.5rem);
+    margin:0 0 0.4rem;
+    color:var(--ink);
+    font-style:italic;
+  }
+  .era-titles .range{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.76rem;
+    letter-spacing:0.1em;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+  }
+
+  .era-intro{
+    max-width:58ch;
+    margin:1.4rem auto 2.6rem;
+    text-align:center;
+    color:var(--ink-soft);
+    line-height:1.75;
+    font-size:0.97rem;
+  }
+
+  .artifact-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:2rem;
+  }
+  @media (max-width:760px){
+    .artifact-row{grid-template-columns:1fr;}
+    .folio{padding:2.6rem 6vw 2.4rem;}
+  }
+
+  .card{
+    background:rgba(255,252,240,0.5);
+    border:1px solid var(--accent-soft, var(--indigo-soft));
+    padding:0;
+    text-align:center;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    transition:box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .card:hover{
+    box-shadow:4px 4px 0 0 var(--accent, var(--indigo));
+    transform:translate(-2px,-2px);
+  }
+  .card-frame{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/3;
+    overflow:hidden;
+    border-bottom:1px solid var(--accent-soft, var(--indigo-soft));
+    background:var(--parchment-deep);
+  }
+  .card-frame img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .card-frame .core{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond', serif;
+    font-size:2.6rem;
+    color:var(--accent, var(--indigo));
+    background:var(--parchment-deep);
+  }
+  .seal{
+    position:absolute;
+    bottom:-20px; right:16px;
+    width:52px; height:52px;
+    border-radius:50%;
+    background:var(--accent, var(--vermilion));
+    color:var(--parchment);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Cormorant Garamond', serif;
+    font-size:1.3rem;
+    box-shadow:0 0 0 3px var(--parchment), 0 2px 3px rgba(0,0,0,0.25);
+    transform:rotate(-8deg);
+  }
+  .card-body{
+    padding:2.2rem 1.5rem 1.6rem;
+  }
+  .card h3{
+    font-size:1.28rem;
+    margin:0 0 0.4rem;
+    color:var(--ink);
+    line-height:1.3;
+    font-style:italic;
+  }
+  .card .medium{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.65rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin-bottom:0.8rem;
+  }
+  .card .teaser{
+    font-size:0.87rem;
+    color:var(--ink-soft);
+    line-height:1.55;
+  }
+  .card .open-cue{
+    margin-top:1rem;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.6rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--accent, var(--indigo));
+  }
+
+  /* ---------- PRINT-ONLY DETAIL ---------- */
+  .print-detail{display:none;}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(43,33,24,0.78);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:4vh 4vw;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.35s ease;
+    z-index:50;
+  }
+  .overlay.open{opacity:1; pointer-events:auto;}
+
+  .panel{
+    width:min(760px, 100%);
+    max-height:88vh;
+    overflow-y:auto;
+    background:var(--parchment);
+    display:grid;
+    grid-template-columns:64px 1fr;
+    position:relative;
+    transform:translateY(24px) scale(0.98);
+    transition:transform 0.4s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  }
+  .overlay.open .panel{transform:translateY(0) scale(1);}
+  .panel-spine{
+    background:var(--indigo);
+    background-image:repeating-linear-gradient(180deg, rgba(199,158,58,0.15) 0 2px, transparent 2px 14px);
+  }
+  @media (max-width:640px){
+    .panel{grid-template-columns:28px 1fr;}
+  }
+  .panel-content{
+    padding:3rem 2.6rem 2.6rem;
+    position:relative;
+  }
+  .panel-close{
+    position:absolute; top:1.2rem; right:1.4rem;
+    background:none; border:1.5px solid var(--ink);
+    width:32px; height:32px; border-radius:50%;
+    color:var(--ink);
+    font-size:0.95rem;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all 0.25s ease;
+  }
+  .panel-close:hover{color:var(--parchment); background:var(--ink);}
+
+  .panel .card-frame{aspect-ratio:16/9; border-bottom:none;}
+  .panel .seal{width:60px; height:60px; font-size:1.5rem; bottom:-24px; right:24px;}
+
+  .panel h3{
+    font-size:2rem;
+    text-align:center;
+    margin:2.2rem 0 0.4rem;
+    color:var(--ink);
+    font-style:italic;
+  }
+  .panel .meta{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.7rem;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:1.8rem;
+  }
+  .panel .meta span{display:block; color:var(--ink-faint); margin-top:0.3rem; letter-spacing:0.02em;}
+
+  .panel .story{
+    color:#332818;
+    line-height:1.85;
+    font-size:0.99rem;
+    margin-bottom:1.6rem;
+  }
+  .panel .credit{
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.6rem;
+    color:var(--ink-faint);
+    margin-bottom:1.4rem;
+  }
+  .panel .tags{
+    display:flex; flex-wrap:wrap; gap:0.6rem;
+    justify-content:center;
+  }
+  .panel .tags span{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.66rem;
+    letter-spacing:0.02em;
+    padding:0.4rem 0.8rem;
+    border:1px solid var(--vermilion);
+    color:var(--vermilion);
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    text-align:center;
+    padding:7vh 6vw 9vh;
+    background:var(--indigo);
+    color:#c7bb96;
+    font-size:0.85rem;
+    line-height:1.85;
+  }
+  footer .display{color:var(--parchment); font-size:1.4rem; margin-bottom:0.9rem; font-style:italic;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+
+  /* ================= PRINT ================= */
+  @media print{
+    @page{ margin:16mm; }
+    html, body{background:#fff !important; color:#000 !important;}
+    .hero{min-height:auto; padding:10mm 0 14mm; page-break-after:always; background:#fff !important; color:#000 !important;}
+    .hero::before,.hero::after,.corner{display:none;}
+    .hero h1{color:#000;}
+    .scroll-cue{display:none;}
+    .binding{display:none;}
+    .era{margin-bottom:10mm; page-break-inside:avoid; opacity:1 !important; transform:none !important;}
+    .folio{border-color:#000;}
+    .folio::before{border-color:#666;}
+    .folio-corner{display:none;}
+    .card{display:none;}
+    .artifact-row{display:block;}
+    .print-detail{
+      display:block;
+      border:1.2px solid #000;
+      padding:6mm;
+      margin-bottom:6mm;
+      break-inside:avoid;
+      page-break-inside:avoid;
+    }
+    .print-detail .pd-head{display:flex; align-items:center; gap:4mm; margin-bottom:3mm;}
+    .print-detail .pd-medallion{width:22mm; height:22mm; border:1.2px solid #000; overflow:hidden; flex:none; display:flex; align-items:center; justify-content:center; background:#fff;}
+    .print-detail .pd-medallion img{width:100%; height:100%; object-fit:cover;}
+    .print-detail .pd-medallion .core{font-family:'Cormorant Garamond', serif; font-size:16pt;}
+    .print-detail h4{font-family:'Cormorant Garamond', serif; font-style:italic; font-size:13pt; margin:0 0 1mm;}
+    .print-detail .pd-meta{font-family:'IBM Plex Mono', monospace; font-size:7.5pt; color:#333; margin:0;}
+    .print-detail .pd-story{font-size:9.5pt; line-height:1.55; margin:2mm 0; color:#111;}
+    .print-detail .pd-tags{font-family:'IBM Plex Mono', monospace; font-size:7pt; color:#444;}
+    .print-detail .pd-credit{font-family:'IBM Plex Mono', monospace; font-size:6.5pt; color:#666; margin-top:2mm;}
+    .overlay{display:none !important;}
+    footer{page-break-before:always; background:#fff !important; color:#000 !important;}
+    footer .display{color:#000;}
+    a{color:#000; text-decoration:none;}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <svg class="corner tl" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 Q2 32 32 32 Q2 32 2 62" stroke="#c99a3a" stroke-width="1"/><circle cx="2" cy="2" r="3" fill="#c99a3a"/></svg>
+  <svg class="corner tr" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 Q2 32 32 32 Q2 32 2 62" stroke="#c99a3a" stroke-width="1"/><circle cx="2" cy="2" r="3" fill="#c99a3a"/></svg>
+  <svg class="corner bl" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 Q2 32 32 32 Q2 32 2 62" stroke="#c99a3a" stroke-width="1"/><circle cx="2" cy="2" r="3" fill="#c99a3a"/></svg>
+  <svg class="corner br" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2 Q2 32 32 32 Q2 32 2 62" stroke="#c99a3a" stroke-width="1"/><circle cx="2" cy="2" r="3" fill="#c99a3a"/></svg>
+
+  <div class="eyebrow">An illuminated study · Indian art, 10,000 BCE — present</div>
+  <h1>Folios of <span class="not-italic">Form</span></h1>
+  <p>Ten folios, each bound to a moment when Indian hands changed what art could be made of — ochre on cliff stone, bronze cast by the lost-wax method, marble inlaid with jewels, kitchen steel welded into a skull. Open each seal to read its fuller account, or print this page for a black-and-white handout.</p>
+  <div class="scroll-cue"><span class="glyph">॥</span><span>Turn the first folio</span></div>
+</section>
+
+<main class="timeline" id="timeline">
+  <div id="era-container"></div>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="panel" id="panel"></div>
+</div>
+
+<footer>
+  <div class="display">चित्रकथा • The Painted Chronicle</div>
+  Built as a study companion on the history of Indian art, from the first painted rock shelters to the present art market.<br>
+  On screen, tap any seal to open its folio. Printed, every account appears in full below its era.<br>
+  Artifact photographs courtesy of Wikimedia Commons contributors, used under their stated open licences.
+</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const WM = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+const eras = [
+  {
+    "title": "Prehistoric Rock Art",
+    "range": "c. 10,000 – 8,000 BCE onward",
+    "intro": "On sandstone cliffs above the Vindhya hills, hunter-gatherers left behind the oldest surviving pictures made on the subcontinent — a record of daily life painted, scratched, and repainted across thousands of years.",
+    "artifacts": [
+      {
+        "name": "Bhimbetka Rock Shelters",
+        "medium": "Mineral pigment on sandstone",
+        "teaser": "Hundreds of painted rock shelters near Bhopal, layered with imagery from the Mesolithic through to historical times.",
+        "letter": "भी",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bhimbetka_Cave_Paintings.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 2.0",
+        "meta": "c. 10,000 BCE onward · Pigment on rock · Bhimbetka Rock Shelters, Madhya Pradesh (UNESCO World Heritage Site)",
+        "story": "Discovered by archaeologist V. S. Wakankar in 1957 while he was riding a train past the Vindhya hills and noticed the rock formations from the window, the Bhimbetka shelters turned out to hold one of the densest concentrations of prehistoric art anywhere in the world — over 750 shelters, many still bearing paint. Generations of artists returned to the same walls over thousands of years, layering hunting parties, wild buffalo, dancing figures, and later horses and riders directly on top of earlier images, using pigments ground from iron oxide, charcoal, and plant dye. Because later paintings were laid over older ones without erasing them, the shelters function almost like a geological core sample of Indian image-making, from the Mesolithic through to historical-period additions. UNESCO inscribed the site as a World Heritage Site in 2003, citing its unbroken visual record spanning tens of thousands of years of human habitation.",
+        "tags": [
+          "Oldest Indian rock art",
+          "UNESCO World Heritage Site",
+          "Continuously repainted"
+        ]
+      },
+      {
+        "name": "Dancing Figures Panel",
+        "medium": "Mineral pigment on sandstone",
+        "teaser": "A crowded scene of figures in a circular dance formation, among the most reproduced images from the Bhimbetka shelters.",
+        "letter": "न",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dancing_painting_at_Bhimbetka.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 3.0",
+        "meta": "Mesolithic period · Pigment on rock · Bhimbetka Rock Shelters, Madhya Pradesh",
+        "story": "Painted in red ochre across an uneven rock face, this panel shows a ring of stick-limbed figures whose linked postures have been read for decades as a communal dance, possibly tied to hunting ritual or seasonal ceremony — though, as with most prehistoric imagery, the artists left no caption to confirm the reading. What is not in doubt is the confidence of the line: economical strokes convey motion and rhythm with almost no anatomical detail, a visual shorthand that later Indian folk painting traditions, from Warli murals to Gond art, would return to independently, centuries and often thousands of kilometers apart. The panel is one of thousands at Bhimbetka that record not myth or kingship but simply people, doing what people do, watched by no one but the rock itself for ten thousand years.",
+        "tags": [
+          "Mesolithic figuration",
+          "Communal ritual imagery",
+          "Precursor to folk painting traditions"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Indus Valley Civilization",
+    "range": "c. 2500 – 1900 BCE",
+    "intro": "Long before temples or empires, the cities of Mohenjo-daro and Harappa produced some of the world's earliest confident figurative art — small in scale, but startlingly assured in technique.",
+    "artifacts": [
+      {
+        "name": "Dancing Girl of Mohenjo-daro",
+        "medium": "Bronze, lost-wax cast",
+        "teaser": "A 10.5 cm bronze figure, hand on hip, that is often called the first sculpture to capture a living pose.",
+        "letter": "द",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Dancing%20girl.%20Mohenjodaro.jpg",
+        "credit": "Photo: Joe Ravi, Wikimedia Commons, CC BY-SA 3.0",
+        "meta": "c. 2500 BCE · Bronze · National Museum, New Delhi",
+        "story": "Barely the length of a hand, this bronze girl stands with one arm covered in bangles and a confidence that has outlasted her civilization by four and a half millennia. She was cast using the lost-wax method — a wax model coated in clay, then melted out and replaced with molten bronze — a technique so refined that its reappearance in later Indian sculpture is sometimes read as a direct inheritance. Nothing about her identity survives: not her name, her role, or why she was made. What survives is posture — weight shifted onto one leg, chin lifted — the earliest known attempt in the subcontinent to render a body in a specific, observed moment rather than a formal stance.",
+        "tags": [
+          "Lost-wax casting",
+          "Earliest known Indian bronze",
+          "Naturalistic pose"
+        ]
+      },
+      {
+        "name": "Seal of the Horned Deity",
+        "medium": "Carved steatite seal",
+        "teaser": "A small stone seal showing a seated, horned figure surrounded by animals — read by many as an early forerunner of later yogic imagery.",
+        "letter": "मु",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shiva%20Pashupati.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, public domain",
+        "meta": "c. 2350 – 2000 BCE · Steatite · National Museum, New Delhi",
+        "story": "Barely larger than a coin, this square steatite seal shows a figure seated cross-legged, wearing a horned headdress, encircled by a rhinoceros, buffalo, elephant, and tiger, with two deer at its feet. Seals like this were pressed into wet clay, probably to mark ownership of trade goods moving through Indus cities — yet this particular image has drawn centuries of speculation. Some scholars see in the cross-legged seated pose and surrounding animals a distant ancestor of later ascetic and yogic imagery, though the connection remains debated rather than proven. What the seal shows without doubt is a civilization already comfortable carving precise, symbolic miniatures for everyday commercial use.",
+        "tags": [
+          "Steatite seal",
+          "Trade & administration",
+          "Debated iconography"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mauryan Period",
+    "range": "c. 322 – 185 BCE",
+    "intro": "Under Emperor Ashoka, stone became a state medium for the first time — polished pillars and edicts spread across the empire, carrying a new, monumental confidence in public sculpture.",
+    "artifacts": [
+      {
+        "name": "Lion Capital of Sarnath",
+        "medium": "Polished Chunar sandstone",
+        "teaser": "Four addorsed lions atop a pillar erected by Ashoka — now the national emblem of India.",
+        "letter": "सिं",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sarnath%20capital.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 4.0",
+        "meta": "c. 250 BCE · Sandstone · Sarnath Museum, Uttar Pradesh",
+        "story": "Ashoka raised this pillar at Sarnath, the deer park where the Buddha is said to have delivered his first sermon, to mark the spot with an image of imperial and spiritual authority at once. Four lions stand back to back atop an abacus carved with a galloping horse, a bull, an elephant, and a lion, each separated by small wheels, all resting on an inverted lotus. The stone carries a mirror-bright polish that Mauryan workshops achieved without any known machinery, a technical feat later dynasties struggled to reproduce. Independent India adopted the capital as its national emblem in 1950, placing a 2,200-year-old carving at the center of a modern republic's identity.",
+        "tags": [
+          "Ashokan pillar",
+          "State-sponsored sculpture",
+          "National emblem of India"
+        ]
+      },
+      {
+        "name": "Didarganj Yakshi",
+        "medium": "Polished sandstone",
+        "teaser": "A monumental, freestanding female figure, prized for its lifelike modeling and glass-like Mauryan polish.",
+        "letter": "य",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Didarganj%20Yakshi%20statue%20in%20the%20Bihar%20Museum.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 4.0",
+        "meta": "c. 3rd century BCE · Sandstone · Bihar Museum, Patna",
+        "story": "Standing over life-size and carrying a fly-whisk over one shoulder, this figure represents a yakshi — a nature spirit associated with fertility and abundance in early Indian belief, long before Buddhist and Hindu iconography formalized around such figures. What draws scholars back to her repeatedly is the surface: a mirror polish so precise it has occasionally been mistaken for a much later date, and a fullness of body treated with an ease that feels almost unguarded for stone this old. She was found on the banks of the Ganges near Patna in 1917, without any inscription to explain who commissioned her or why — one of Mauryan art's most accomplished works, and one of its most silent.",
+        "tags": [
+          "Freestanding sculpture",
+          "Mauryan polish",
+          "Yakshi iconography"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Gupta Period",
+    "range": "c. 320 – 550 CE",
+    "intro": "Often called a golden age, the Gupta era fixed the visual template for the Buddha image and produced the painted narrative cycles at Ajanta — a moment when form, serenity, and technical mastery aligned.",
+    "artifacts": [
+      {
+        "name": "Standing Buddha of Sarnath",
+        "medium": "Chunar sandstone",
+        "teaser": "The defining image of the standing Buddha type — transparent robe, downcast eyes, halo of restrained ornament.",
+        "letter": "बु",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Sarnath%20Museum%20standing%20Buddha.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, Government Open Data Licence India",
+        "meta": "5th century CE · Sandstone · Sarnath Museum, Uttar Pradesh",
+        "story": "This standing figure, carved from the same fine-grained Chunar sandstone used by Ashoka's workshops centuries earlier, became the model that later Buddhist art across Asia would return to again and again. The robe clings so closely it seems almost transparent, rendered not through visible drapery folds but through a series of fine parallel lines that suggest cloth without hiding the body beneath — a Gupta invention that balanced spiritual detachment with physical presence. The face carries the era's signature serenity: eyes half-lowered, expression neither smiling nor stern, designed to hold a viewer's gaze in stillness rather than narrative drama.",
+        "tags": [
+          "Gupta Buddha type",
+          "Sarnath school",
+          "Influenced Asian Buddhist art"
+        ]
+      },
+      {
+        "name": "Ajanta Cave Murals",
+        "medium": "Fresco-secco wall painting",
+        "teaser": "Narrative murals inside rock-cut Buddhist caves, painted with a fluency of line that still guides Indian painting today.",
+        "letter": "अ",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Mural%20paintings%20at%20Ajanta%20caves.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 3.0",
+        "meta": "5th – 6th century CE · Cave murals · Ajanta Caves, Maharashtra",
+        "story": "Carved directly into a horseshoe-shaped cliff above the Waghora river, the Ajanta caves hold the most complete surviving body of ancient Indian painting. Monks and artisans prepared the rock walls with layers of mud, dung, and lime plaster, then painted scenes from the Buddha's past lives with mineral pigments while the surface was still workable. The figures move with an ease of line that later Indian painting traditions, from Pahari miniatures to modern Indian modernists, have studied and quoted directly. Sealed off and forgotten for centuries, the caves were rediscovered only in 1819 by a British officer on a tiger hunt.",
+        "tags": [
+          "Rock-cut architecture",
+          "Buddhist Jataka narratives",
+          "Rediscovered 1819"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Medieval Temple Art",
+    "range": "c. 8th – 13th century CE",
+    "intro": "Regional dynasties — Chola, Chandela, Ganga — turned temple building into a total art form, fusing architecture, bronze casting, and stone carving into a single devotional vision.",
+    "artifacts": [
+      {
+        "name": "Chola Nataraja",
+        "medium": "Bronze, lost-wax cast",
+        "teaser": "Shiva as Lord of the Dance, caught mid-motion inside a ring of cosmic fire — perhaps the most reproduced bronze in Indian art.",
+        "letter": "न",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/NatarajaMET.JPG",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 2.5",
+        "meta": "c. 10th – 12th century CE · Bronze · Various collections, originally Tamil Nadu",
+        "story": "Cast by Chola bronze workers using a technique passed down from ancient lost-wax casting, the Nataraja freezes Shiva at the instant of a cosmic dance — one foot crushing the dwarf of ignorance, the other lifted in release, four arms holding fire, a drum, and gestures of protection and grace, all inside a ring of flame representing the universe in constant creation and destruction. Chola temples produced these bronzes not as static idols but as portable images, dressed, garlanded, and carried in procession during festivals — meant to be handled, not only viewed. The sculpture's balance of violent motion and total stillness has made it one of the most quoted images in world sculpture.",
+        "tags": [
+          "Chola bronze casting",
+          "Processional deity",
+          "Cosmic dance symbolism"
+        ]
+      },
+      {
+        "name": "Sun Temple Wheel, Konark",
+        "medium": "Carved chlorite/laterite stone",
+        "teaser": "One of twelve monumental stone wheels that turn the entire Konark temple into a chariot of the sun god.",
+        "letter": "सू",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Konark%20Sun%20Temple%20Wheel.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY-SA 3.0",
+        "meta": "c. 1250 CE · Stone relief · Konark, Odisha",
+        "story": "The Sun Temple at Konark was conceived as a colossal stone chariot for the sun god Surya, complete with twelve pairs of intricately carved wheels and a team of stone horses straining at its front. Each wheel, over three meters across, is a functioning sundial as well as a sculpture — its spokes cast shadows that mark time across the day, and its rim is carved with a dense band of figures, floral motifs, and narrative scenes. Built under King Narasimhadeva I, most of the temple's superstructure has collapsed over the centuries, but the wheels remain among the most technically ambitious stone carvings of medieval India.",
+        "tags": [
+          "Architectural sculpture",
+          "Functions as sundial",
+          "UNESCO World Heritage Site"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Mughal Period",
+    "range": "16th – 18th century CE",
+    "intro": "Persian, Central Asian, and Indian painting traditions merged in the imperial ateliers of Akbar, Jahangir, and Shah Jahan, producing miniature painting of extraordinary detail and a new architectural language in stone and inlay.",
+    "artifacts": [
+      {
+        "name": "Akbarnama Miniatures",
+        "medium": "Opaque watercolour and gold on paper",
+        "teaser": "An illustrated chronicle of Emperor Akbar's reign, painted collaboratively by dozens of court artists over years.",
+        "letter": "अ",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/1564-An%20Attempt%20on%20Akbar%27s%20Life-Akbarnama.jpg",
+        "credit": "Photo: Wikimedia Commons, public domain (PD-old)",
+        "meta": "c. 1590 – 1595 CE · Manuscript painting · Victoria & Albert Museum, London",
+        "story": "Commissioned by Akbar to record his own reign, the Akbarnama manuscript brought together Persian-trained masters and Indian-born painters in the same royal workshop, often with several artists working on a single page — one responsible for the composition, another for the faces, another for the fine detail of textiles and architecture. The result is a hybrid style unlike anything before it: Persian precision of line combined with an Indian appetite for crowded, energetic scenes and vivid, unshaded color. Battle scenes, court audiences, and hunting expeditions unfold across the pages with a density of incident that makes each miniature function almost like a frozen film still.",
+        "tags": [
+          "Mughal miniature painting",
+          "Collaborative court workshop",
+          "Historical chronicle"
+        ]
+      },
+      {
+        "name": "Pietra Dura of the Taj Mahal",
+        "medium": "Inlaid semi-precious stone in marble",
+        "teaser": "Flower and vine motifs inlaid into white marble using a technique adapted from Italian pietra dura craft.",
+        "letter": "ता",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Semi-Precious%20Stones%20Inlay%20at%20the%20Taj%20Mahal.jpg",
+        "credit": "Photo: Wikimedia Commons contributor",
+        "meta": "c. 1632 – 1653 CE · Marble inlay · Agra, Uttar Pradesh",
+        "story": "The white marble surfaces of the Taj Mahal are inset with thousands of pieces of carnelian, jasper, lapis lazuli, and other semi-precious stones, cut and fitted into floral and vine patterns so precisely that the joins are nearly invisible to the eye. The technique, known as pietra dura, likely reached the Mughal court through European craftsmen and travelers, and was adapted by Indian artisans into a distinct decorative vocabulary suited to Islamic architectural tradition, favoring stylized flowers over figurative scenes. Built by Shah Jahan as a mausoleum for his wife Mumtaz Mahal, the monument fuses Persian, Central Asian, and Indian building traditions into a single, unified structure.",
+        "tags": [
+          "Pietra dura inlay",
+          "Mughal architecture",
+          "UNESCO World Heritage Site"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Company & Colonial Art",
+    "range": "18th – 19th century CE",
+    "intro": "As European trading companies and later colonial administration reshaped patronage, Indian artists adapted their techniques for new clients, new subjects, and eventually new print technologies.",
+    "artifacts": [
+      {
+        "name": "Company School Natural History Studies",
+        "medium": "Watercolour on paper",
+        "teaser": "Botanical and zoological studies painted by Indian artists for British East India Company patrons, blending Mughal technique with European scientific illustration.",
+        "letter": "क",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Shaikh%20Zain%20ud-Din%20-%20Brahminy%20Starling%20with%20Two%20Antheraea%20Moths%2C%20Caterpillar%2C%20and%20Cocoon%20on%20an%20Indian%20Jujube%20Tree.jpg",
+        "credit": "Painting: Sheikh Zain ud-Din, c.1780, public domain, via Wikimedia Commons",
+        "meta": "c. 1770 – 1850 CE · Watercolour · Various collections",
+        "story": "As the East India Company's administrators and surgeons sought to document Indian flora, fauna, and daily life for European audiences, they employed local artists trained in the Mughal miniature tradition to paint in a new hybrid idiom — the fine brushwork and flat color of Mughal painting combined with the shading, perspective, and scientific precision expected by British patrons. Painters such as Sheikh Zain ud-Din produced astonishingly accurate studies of birds and plants for patrons like Lady Impey in Calcutta. The style, now called Company painting, represents one of the first sustained encounters between Indian and European visual conventions, produced by Indian hands for a colonial market.",
+        "tags": [
+          "Company painting",
+          "Cross-cultural technique",
+          "Scientific illustration"
+        ]
+      },
+      {
+        "name": "Raja Ravi Varma's Oleographs",
+        "medium": "Oil painting, reproduced as lithographic prints",
+        "teaser": "Mythological scenes painted in a European academic style, then mass-printed and distributed across India — the first truly popular Indian art.",
+        "letter": "र",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Goddess%20Saraswati%20by%20Raja%20Ravi%20Varma%2C%201896.jpg",
+        "credit": "Painting: Raja Ravi Varma, 1896, public domain, via Wikimedia Commons",
+        "meta": "c. 1880s – 1900s CE · Oil painting & lithograph · Raja Ravi Varma Press",
+        "story": "Trained in European academic oil technique, Raja Ravi Varma applied its naturalistic modeling and dramatic lighting to Hindu deities and epic scenes, giving gods like Lakshmi and Saraswati a physical, human presence they had rarely had in Indian visual tradition. Rather than keep these paintings for elite patrons, he established a lithographic press to print and sell affordable oleograph reproductions across the country, putting his particular vision of divine figures into homes, calendars, and shop walls nationwide. That printed imagery became so widespread that it still shapes how many Indians visualize these deities today — arguably the first genuinely mass-market Indian art.",
+        "tags": [
+          "Academic oil technique",
+          "Mass-produced lithography",
+          "Shaped popular religious imagery"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Bengal School / Nationalist Modernism",
+    "range": "early 20th century",
+    "intro": "In direct response to European academic realism, a generation of artists centered in Calcutta turned back toward Mughal, Rajput, and Ajanta traditions to build a self-consciously Indian modern art.",
+    "artifacts": [
+      {
+        "name": "Bharat Mata by Abanindranath Tagore",
+        "medium": "Watercolour wash on paper",
+        "teaser": "A four-armed female figure personifying the Indian nation, painted in soft wash technique as a deliberate rejection of colonial academic realism.",
+        "letter": "भा",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bharat%20Mata%20by%20Abanindranath%20Tagore.jpg",
+        "credit": "Painting: Abanindranath Tagore, 1905, public domain, via Wikimedia Commons",
+        "meta": "1905 CE · Watercolour · Victoria Memorial Hall, Kolkata",
+        "story": "Painted at the height of the Swadeshi movement against the 1905 partition of Bengal, this small watercolour shows a saffron-robed woman with four hands offering cloth, books, food grain, and spiritual knowledge — a deliberately restrained, almost devotional image built using the wash technique Abanindranath developed by softening the paper's surface repeatedly with layers of thin, diluted pigment. The choice of a gentle, Mughal-and-Japanese-influenced style over the bold European oil painting favored by his uncle Raja Ravi Varma's generation was itself a political statement, asserting that Indian art did not need European technique to carry serious meaning. The image was carried through nationalist processions and remains one of the most reproduced political images from the independence movement.",
+        "tags": [
+          "Swadeshi movement",
+          "Wash technique",
+          "Nationalist iconography"
+        ]
+      },
+      {
+        "name": "Nandalal Bose's Haripura Panels",
+        "medium": "Tempera on handmade paper, bound in posters",
+        "teaser": "Panels depicting rural Indian craftspeople, commissioned by Gandhi for the 1938 Haripura Congress session.",
+        "letter": "ह",
+        "image": "https://images.unsplash.com/photo-1605721911519-3dfeb3be25e7?q=80&w=500&auto=format&fit=crop",
+        "meta": "1937 CE · Tempera on paper · National Gallery of Modern Art, New Delhi",
+        "story": "When Mahatma Gandhi asked Nandalal Bose to design decorations for the Indian National Congress session at Haripura, Bose traveled through Gujarati villages sketching potters, weavers, farmers, and musicians at work, then translated those studies into bold, flat panels using folk-art-inspired line and color rather than academic realism. The panels celebrated everyday rural labor as the true subject of a modern Indian art, in direct alignment with Gandhi's vision of self-reliant village economy. Bose went on to lead the influential Kala Bhavana art school at Santiniketan, training a generation of artists to look toward indigenous craft traditions rather than European academies for their visual language.",
+        "tags": [
+          "Folk-inspired modernism",
+          "Commissioned by Gandhi",
+          "Santiniketan school"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Post-Independence & Contemporary",
+    "range": "1947 CE — present",
+    "intro": "Freed from both colonial academies and nationalist obligation, a new generation of Indian artists engaged directly with global modernism while insisting on their own visual vocabulary.",
+    "artifacts": [
+      {
+        "name": "M. F. Husain's Horse Paintings",
+        "medium": "Oil on canvas",
+        "teaser": "A recurring, galloping horse motif that became one of the most recognized signatures in Indian modern art.",
+        "letter": "अ",
+        "image": "https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=500&auto=format&fit=crop",
+        "meta": "1950s – 2000s CE · Oil on canvas · Various collections worldwide",
+        "story": "A founding member of the Progressive Artists' Group formed in Bombay shortly after independence, Maqbool Fida Husain built a career around bold, gestural figuration that drew as freely from Indian miniature painting and folk sculpture as from European modernists like Picasso and Matisse. His galloping, muscular horses — painted and repainted across decades in thick, expressive brushwork — became a personal signature associated with energy, freedom, and a restless, unbroken line inherited from centuries of Indian drawing. Husain's refusal to stay within any single tradition, moving fluidly between Hindu mythology, Bollywood, and abstraction, exemplified the Progressive Artists' broader ambition: an Indian modernism answerable to no one else's rules.",
+        "tags": [
+          "Progressive Artists' Group",
+          "Post-independence modernism",
+          "Global exhibition history"
+        ]
+      },
+      {
+        "name": "The Progressive Artists' Group Manifesto Works",
+        "medium": "Mixed media, various canvases",
+        "teaser": "Founded in 1947, this Bombay collective deliberately broke from both colonial realism and Bengal School revivalism to claim a place in international modern art.",
+        "letter": "प",
+        "image": "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?q=80&w=500&auto=format&fit=crop",
+        "meta": "Founded 1947 CE · Mixed media · National Gallery of Modern Art, New Delhi & international collections",
+        "story": "Formed in the same year India became independent, the Progressive Artists' Group — including Husain, F. N. Souza, S. H. Raza, and others — rejected both the academic realism of colonial-era art schools and the deliberately revivalist folk aesthetic of the Bengal School, arguing that Indian artists should engage modernism on entirely equal footing with their European and American contemporaries rather than defining themselves in opposition to the West. Their work ranged wildly in style, from Souza's raw, distorted figures to Raza's geometric abstraction rooted in the bindu, a single point symbolizing origin in Indian metaphysics. The group scattered internationally within a decade, but its founding refusal to choose between being 'Indian' and being 'modern' still shapes how contemporary Indian art positions itself today.",
+        "tags": [
+          "Founded 1947",
+          "Bombay-based collective",
+          "Bridged Indian & global modernism"
+        ]
+      }
+    ]
+  },
+  {
+    "title": "New Millennium & Global Market",
+    "range": "2000s CE — present",
+    "intro": "As Indian artists entered the international auction and biennale circuit in the 2000s, everyday materials — kitchen steel, forehead bindis, cow dung — became the raw vocabulary for questioning identity, ritual, and belonging on a world stage.",
+    "artifacts": [
+      {
+        "name": "Subodh Gupta's Very Hungry God",
+        "medium": "Stainless steel kitchen utensils",
+        "teaser": "A monumental skull built from hundreds of everyday Indian kitchen containers, weighing over a tonne.",
+        "letter": "पा",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Subodh_Gupta,_Very_Hungry_God,_2006.jpg",
+        "credit": "Photo: Wikimedia Commons contributor",
+        "meta": "2006 CE · Stainless steel utensils · Collection of François Pinault",
+        "story": "Subodh Gupta grew up watching the stainless-steel tiffins, pans, and thalis that fill nearly every Indian kitchen, objects he has called stand-ins for memory, class, and domestic ritual. For Very Hungry God, he welded hundreds of these vessels into a skull towering more than a metre and a half high, a memento mori built entirely from the tools of daily nourishment. French collector François Pinault bought the piece in 2006 and later displayed it outside his Palazzo Grassi during the Venice Biennale, where its glittering, familiar surfaces read as both celebration and warning about consumption. Gupta, often labeled 'the Damien Hirst of India' for the comparison to Hirst's diamond-covered skull, insists his own material is deliberately unglamorous and universally recognizable, the opposite of Hirst's jewels.",
+        "tags": [
+          "Everyday materials as sculpture",
+          "International collector market",
+          "Venice Biennale exhibition"
+        ]
+      },
+      {
+        "name": "Bharti Kher's An Absence of Assignable Cause",
+        "medium": "Bindis on fibreglass",
+        "teaser": "A life-size sculpture of a sperm whale's heart, its surface entirely covered in traditional forehead bindis.",
+        "letter": "बिं",
+        "image": "https://commons.wikimedia.org/wiki/Special:FilePath/Bharti_Kher_-_An_Absence_Of_Assignable_Cause.jpg",
+        "credit": "Photo: Wikimedia Commons contributor, CC BY 2.0",
+        "meta": "2007 CE · Fibreglass and bindis · Collection of the artist, exhibited internationally",
+        "story": "Unable to find reliable scientific documentation of what a blue whale's heart actually looks like, Bharti Kher built one from imagination — a two-chambered fibreglass form nearly three metres long, its veins and chambers entirely skinned in thousands of small, colored bindis. Kher began working with the bindi, the forehead dot traditionally worn by South Asian women to signal marital status or spiritual focus, after first noticing one on a stranger at an Indian market in 1995, and has since used the form as a kind of paint applied by hand, thousands of times over, to bodies, mirrors, and invented anatomies. Read against the whale's enormous scale, the piece turns a small everyday object of feminine adornment into an oversized organ of feeling — Kher has said she thinks of her bindi-covered creatures as contemporary shamans, standing in for the emotional and ecological unease of the present.",
+        "tags": [
+          "Bindi as sculptural material",
+          "International auction record artist",
+          "Fantastical anatomy"
+        ]
+      }
+    ]
+  }
+];
+
+/* ---------------- RENDER ---------------- */
+const container = document.getElementById('era-container');
+
+const cornerSVG = (accent) => `
+  <svg class="folio-corner tl" viewBox="0 0 34 34" fill="none"><path d="M1 1 L1 14 M1 1 L14 1" stroke="${accent}" stroke-width="1.5"/></svg>
+  <svg class="folio-corner tr" viewBox="0 0 34 34" fill="none"><path d="M1 1 L1 14 M1 1 L14 1" stroke="${accent}" stroke-width="1.5"/></svg>
+  <svg class="folio-corner bl" viewBox="0 0 34 34" fill="none"><path d="M1 1 L1 14 M1 1 L14 1" stroke="${accent}" stroke-width="1.5"/></svg>
+  <svg class="folio-corner br" viewBox="0 0 34 34" fill="none"><path d="M1 1 L1 14 M1 1 L14 1" stroke="${accent}" stroke-width="1.5"/></svg>
+`;
+
+function frameHTML(art, extraClass){
+  if(art.image){
+    return `<div class="card-frame ${extraClass||''}">
+      <img src="${art.image}" alt="${art.name}" loading="lazy"
+        onerror="this.parentElement.innerHTML='<div class=&quot;core&quot;>${art.letter}</div>'">
+      <div class="seal">${art.letter}</div>
+    </div>`;
+  }
+  return `<div class="card-frame ${extraClass||''}"><div class="core">${art.letter}</div><div class="seal">${art.letter}</div></div>`;
+}
+
+eras.forEach((era, ei) => {
+  const accent = ei % 2 === 0 ? 'var(--indigo)' : 'var(--vermilion)';
+  const accentSoft = ei % 2 === 0 ? 'var(--indigo-soft)' : 'var(--vermilion-soft)';
+  const num = String(ei + 1).padStart(2, '0');
+
+  const section = document.createElement('section');
+  section.className = 'era';
+  section.style.setProperty('--accent', accent);
+  section.style.setProperty('--accent-soft', accentSoft);
+
+  section.innerHTML = `
+    <div class="binding"><span>fol. ${num}</span><span class="dots"></span><span>${era.range}</span></div>
+    <div class="folio">
+      ${cornerSVG(accent)}
+      <div class="era-head">
+        <div class="era-label mono">Folio ${num}</div>
+        <div class="era-titles">
+          <h2>${era.title}</h2>
+          <div class="range">${era.range}</div>
+        </div>
+      </div>
+      <p class="era-intro">${era.intro}</p>
+      <div class="artifact-row"></div>
+    </div>
+  `;
+
+  const row = section.querySelector('.artifact-row');
+  era.artifacts.forEach((art) => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      ${frameHTML(art)}
+      <div class="card-body">
+        <h3>${art.name}</h3>
+        <div class="medium mono">${art.medium}</div>
+        <p class="teaser">${art.teaser}</p>
+        <div class="open-cue mono">— open folio —</div>
+      </div>
+    `;
+    card.addEventListener('click', () => openPanel(era, art, accent));
+    row.appendChild(card);
+
+    const pd = document.createElement('div');
+    pd.className = 'print-detail';
+    pd.innerHTML = `
+      <div class="pd-head">
+        <div class="pd-medallion">${art.image ? `<img src="${art.image}" alt="${art.name}">` : `<div class="core">${art.letter}</div>`}</div>
+        <div>
+          <h4>${art.name}</h4>
+          <p class="pd-meta">${era.title} — ${art.meta}</p>
+        </div>
+      </div>
+      <p class="pd-story">${art.story}</p>
+      <div class="pd-tags">${art.tags.join('  ·  ')}</div>
+      ${art.credit ? `<div class="pd-credit">${art.credit}</div>` : ''}
+    `;
+    row.parentElement.appendChild(pd);
+  });
+
+  container.appendChild(section);
+});
+
+/* ---------------- MODAL ---------------- */
+const overlay = document.getElementById('overlay');
+const panel = document.getElementById('panel');
+
+function openPanel(era, art, accent){
+  panel.style.setProperty('--accent', accent);
+  panel.innerHTML = `
+    <div class="panel-spine"></div>
+    <div class="panel-content">
+      <button class="panel-close" id="panel-close">✕</button>
+      ${frameHTML(art)}
+      <h3>${art.name}</h3>
+      <div class="meta">${era.title}<span>${art.meta}</span></div>
+      <p class="story">${art.story}</p>
+      ${art.credit ? `<div class="credit">${art.credit}</div>` : ''}
+      <div class="tags">${art.tags.map(t => `<span>${t}</span>`).join('')}</div>
+    </div>
+  `;
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  panel.querySelector('#panel-close').addEventListener('click', closePanel);
+}
+function closePanel(){
+  overlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+overlay.addEventListener('click', (e) => { if(e.target === overlay) closePanel(); });
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closePanel(); });
+
+/* ---------------- SCROLL REVEAL ---------------- */
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('in-view');
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.era').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
